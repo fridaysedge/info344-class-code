@@ -8,7 +8,27 @@ $appId = '2de143494c0b295cca9337e1e96b00e0';
 //weather icon URLs
 // http://openweathermap.org/img/w/{iconName}.png
 
-$q = '';
+require_once 'connection.php';
+require_once 'models/zip-model.php';
+
+if (isset($_GET['q'])) {
+    $q = $_GET['q'];   
+}
+else {
+    $q = '';
+}
+
+$conn = getConnection();
+$zipModel = new Zips($conn);
+$matches = $zipModel->search($q);
+
+if (count($matches) == 1) {
+    $zip = $matches[0]['zip'];
+    $url = "http://api.openweathermap.org/data/2.5/weather?zip={$zip},us&units=imperial&appid={$appId}";
+    $json = file_get_contents($url);
+    $weatherData = json_decode($json);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,9 +44,14 @@ $q = '';
 </head>
 <body class="container">
     <?php 
-    include 'views/search-form.php';
-
+    include 'views/search-form.php';   
+    include 'views/matches.php';
+    
+    if (isset($weatherData)) {
+        include 'views/weather.php';
+    }
     ?>
+       
    
 </body>
 </html>

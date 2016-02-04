@@ -12,8 +12,10 @@
     "bluebird": "^3.1.2",
     "body-parser": "^1.14.2",
     "express": "^4.13.4",
+    "htmlparser2": "^3.9.0",
     "mongoose": "^4.3.7",
     "morgan": "^1.6.1",
-    "mysql": "^2.10.2"
+    "mysql": "^2.10.2",
+    "request": "^2.68.0"
   }
 }
