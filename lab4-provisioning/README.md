@@ -83,7 +83,21 @@ If you're inside of the Node interactive shell, then our script probably worked!
 
 ## Part IV: Running Provisioning on a Remote VM
 
+<<<<<<< HEAD
 `ssh root@ip-address “bash -s” < provision.sh`
+=======
+You can use your provisioning script not only to provision a Vagrant VM, but also your production VM.
+To run it against a new VM, use ssh:
+
+`ssh root@ip-address "bash -s" < provision.sh`
+
+This connects to the server as the `root` account and executes the script.
+If you don't have root access to the VM, but instead access the VM with a non-root
+account that has `sudo` privileges, then use `sudo` when running bash so that
+your script can install new software on the VM:
+
+`ssh some-sudo-user@ip-address "sudo bash -s" < provision.sh`
+>>>>>>> 278f399a03f67ccb40c80ec9fe59b166249f0dbb
 
 ## Part V: Industry Solutions (optional)
 
