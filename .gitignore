@@ -18,4 +18,6 @@ typings
 # ignore .key files
 *.key
 
-goparallel/data
+suggestion-service/files
+
+suggestion-service-mod/files

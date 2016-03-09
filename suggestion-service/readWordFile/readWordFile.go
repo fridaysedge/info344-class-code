@@ -1,10 +1,11 @@
-package main
+package readWordFile
 
 import (
     "bufio"
     "fmt"
     "os"
-    "github.com/fridaysedge/info344-class-code/gotrie/wordTrie"
+    "strconv"
+    "github.com/fridaysedge/info344-class-code/suggestion-service/wordTrie"
 )
 	
 func check(e error) {
@@ -13,12 +14,14 @@ func check(e error) {
     }
 }
 
-func main() {
+func FindWords(prefix string, max string) []string {
+    
+    convertedMax, _ := strconv.ParseInt(max, 10, 8)
 
     wordTrie := wordTrie.NewTrie()
     
     // Open the text file
-    f, err := os.Open("wordsEn.txt")
+    f, err := os.Open("./files/wordsEn.txt")
     check(err)
     
     // Begin scanning the text file line by line
@@ -33,7 +36,6 @@ func main() {
     f.Close()
     
     var listOfWords []string
-    listOfWords = wordTrie.FindEntries("car", 10)
-    fmt.Println(listOfWords)
-    fmt.Println(wordTrie.GetNumberOfItems())
+    listOfWords = wordTrie.FindEntries(prefix, uint8(convertedMax))
+    return listOfWords
 }

@@ -21,6 +21,7 @@ var memstats = new(runtime.MemStats)
 
 func getMemStats(w http.ResponseWriter, r *http.Request){
 	runtime.ReadMemStats(memstats)
+    fmt.Println(memstats.Alloc)
 	// Using a map this time instead of using a structure like in sayHello
 	allocstats := make(map[string]uint64)
 	allocstats["alloc"] = memstats.Alloc
