@@ -11,7 +11,7 @@ import (
 
 var trie = wordTrie.NewTrie()
 var mem runtime.MemStats
-var memoryLimit = uint64(1000000000)
+var memoryLimit = uint64(800000000)
 
 /*
 */	
@@ -26,6 +26,7 @@ Populates a trie structure with the contents of a text file that
 has the provided name
 */
 func PopulateTrie(file string){
+    trie = wordTrie.NewTrie()
     // Open the text file
     f, err := os.Open(file)
     //f, err := os.Open(file)

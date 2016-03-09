@@ -14,6 +14,11 @@ type SuggestionResponse struct {
 	Suggestions []string `json:"suggestions"`
 }
 
+func landing(w http.ResponseWriter, r *http.Request){
+	http.ServeFile(w, r, "static/index.html")
+	readWordFile.PopulateTrie("./files/enwiki-latest-all-titles-in-ns0")
+}
+
 // sayHello handles the http read and write
 func suggestions(w http.ResponseWriter, r *http.Request){
 
@@ -40,11 +45,11 @@ func suggestions(w http.ResponseWriter, r *http.Request){
 }
 
 func main(){
-	http.Handle("/", http.FileServer(http.Dir("./static")))
+	//http.Handle("/", http.FileServer(http.Dir("./static")))
+	http.HandleFunc("/", landing)
 	http.HandleFunc("/api/v1/suggestions", suggestions)
 	fmt.Println("Server listening on port 9000")
-    go readWordFile.PopulateTrie("./files/enwiki-latest-all-titles-in-ns0")
-	// This stops the flow until the server is manually shut down
+    // This stops the flow until the server is manually shut down
 	http.ListenAndServe(":9000", nil)
 }
 

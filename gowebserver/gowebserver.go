@@ -40,6 +40,7 @@ func getMemStats(w http.ResponseWriter, r *http.Request){
 
 // sayHello handles the http read and write
 func sayHello(w http.ResponseWriter, r *http.Request){
+	/*
 	// Get whatever follows /api/v1/hello/
 	// On the requested URL
 	name := r.URL.Path[len("/api/v1/hello/"):]
@@ -59,14 +60,16 @@ func sayHello(w http.ResponseWriter, r *http.Request){
 		w.Header().Add("Content-Type", "application/json")
 		w.Write(j)
 	}
+	*/
 	// Basic examples
 	//w.Write([]byte("Hello World"))
 	//w.Write([]byte("Hello " + name))
+	http.ServeFile(w, r, "static/index.html")
 }
 
 func main(){
-	//http.HandleFunc("/", sayHello)
-	http.Handle("/", http.FileServer(http.Dir("./static")))
+	http.HandleFunc("/", sayHello)
+	//http.Handle("/", http.FileServer(http.Dir("./static")))
 	//http.HandleFunc("/api/v1/hello", sayHello)
 	http.HandleFunc("/api/v1/hello/", sayHello)
 	http.HandleFunc("/api/v1/memstats", getMemStats)
