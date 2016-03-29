@@ -28,7 +28,7 @@ module.exports.Router = function(stories) {
         //insert a new story into the database
         //and return the data with default values
         //applied
-        
+        console.log(req.body.url); //TEST
         //TODO: validate that req.body.url exists and is a valid URL
         
         //fetch the HTML for the new URL
