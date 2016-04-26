@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <title>MyBank</title>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1>MyBank</h1>
+            <p>Accounts Overview:</p>
+            <p><%= user.username %></p>
+            <form action="/transactions" method="post">
+                <div class="form-group">
+                    <label>Accounts: </label><br>
+                    <% accounts.forEach(function(account) { %>
+                        <input type="radio" name="account" value="<%= account.account_id %>">
+                        <%= account.accountname %> - <%= account.account_id %> - <%= account.balance %><br />
+                    <% }); %>
+                </div>
+                <button type="submit" class="btn btn-warning">View Transactions</button>
+            </form>
+            <br />
+            <p>
+                <a href="/" class="btn btn-danger">Sign Out</a>
+                <a href="/add-account" class="btn btn-success">Add Account</a>
+                <a href="/transfer-my-accounts" class="btn btn-primary">Transfer (My Accounts)</a>
+                <a href="/transfer-other-accounts" class="btn btn-info">Transfer (Other Accounts)</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

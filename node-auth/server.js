@@ -36,7 +36,7 @@ var ghStrategy = new GitHubStrategy(ghConfig,
 
 //read this from an environment variable
 //set the environment variable using the command
-//  $ export COOKIE_SIG_SECRET="my secret value"
+//  $ export COOKIE_SIG_SECRET="41edbf0184d95053721192d641af27500a480162"
 //and then start the server
 var cookieSigSecret = process.env.COOKIE_SIG_SECRET;
 if (!cookieSigSecret) {
