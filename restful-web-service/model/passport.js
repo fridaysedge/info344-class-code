@@ -1,7 +1,6 @@
 'use strict';
 
 var LocalStrategy = require('passport-local').Strategy;
-var GithubStrategy = require('passport-github').Strategy;
 var bcrypt = require('bcrypt-nodejs');
 var account = require('./account.js');
 
@@ -63,17 +62,4 @@ module.exports = function(passport, connection) {
             });
         })
     );
-    
-    passport.use(new GithubStrategy({
-        clientID: 'dee6ee32777718234c03',
-        clientSecret: '41edbf0184d95053721192d641af27500a480162',
-        callbackURL: '/signin/github/callback'
-    }, function(accessToken, refreshToken, profile, done){
-        console.log('Authentication Successful!');
-        console.dir(profile);
-        done(null, {
-        accessToken: accessToken,
-        profile: profile
-        });
-    }));
 };

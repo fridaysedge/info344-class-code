@@ -1,5 +1,16 @@
 
 var account = require('../model/account.js');
+var bluebird = require('bluebird');
+var mysql = require('mysql');
+var dbConfig = require('../secret/db-config.json');
+var connection = bluebird.promisifyAll(mysql.createConnection(dbConfig));
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  else
+    res.redirect(401, '/login');
+}
 
 module.exports = function(app, passport, connection) {
     
@@ -17,15 +28,9 @@ module.exports = function(app, passport, connection) {
             failureFlash : true
 		}),
         function(req, res) {
-            console.log("hello");
-
-            if (req.body.remember) {
-              req.session.cookie.maxAge = 1000 * 60 * 3;
-            } else {
-              req.session.cookie.expires = false;
-            }
-        res.redirect('/');
-    });
+            res.redirect('/');
+        }
+    );
 
 	app.get('/signup', function(req, res) {
 		res.render('signup.ejs');
@@ -37,15 +42,9 @@ module.exports = function(app, passport, connection) {
         failureFlash : true
 	}));
 
-    app.get('/github', passport.authenticate('github'));
-    
-    app.get('/signin/github/callback', passport.authenticate('github'), 
-        function(req, res) {
-            res.render('account.ejs');
-    }); 
-
-	app.get('/account', isLoggedIn, function(req, res) {
-        account.readAccounts(connection, req.user.id, function(err, accountInfo){
+	app.get('/account', ensureAuthenticated, function(req, res) {        
+        account.readAccounts(connection, req.user.id, 
+        function(err, accountInfo){
             res.render('account.ejs', {
                 user : req.user,
                 accounts : accountInfo
@@ -53,18 +52,40 @@ module.exports = function(app, passport, connection) {
         });
 	});
     
-    app.get('/add-account', isLoggedIn, function(req, res) {
+    app.get('/update-user', ensureAuthenticated, function(req, res) {
+        res.render('update-user.ejs', {
+            user : req.user
+        });
+	});
+    
+    app.post('/update-user', ensureAuthenticated, function(req, res) {
+        account.updateUser(
+            connection, 
+            req.user.id, 
+            req.body.username, 
+            req.body.password);
+        res.redirect('/account');
+	});
+    
+    app.get('/add-account', ensureAuthenticated, function(req, res) {
         res.render('add-account.ejs', {
             user : req.user
         });
 	});
     
-    app.post('/add-account', isLoggedIn, function(req, res) {
-        account.addNewAccount(connection, req.body.account_name, req.user.id);
-        res.redirect('/account');
+    app.post('/add-account', ensureAuthenticated, function(req, res) {
+        account.getAccountQty(connection, req.user.id, 
+            function(err, accountInfo){
+                if(accountInfo[0].qty < 5){
+                    account.addNewAccount(connection, req.body.account_name, req.user.id);
+                    res.redirect('/account');
+                }else{
+                    res.redirect(400, '/account');
+                }
+        });
 	});
 
-	app.get('/transfer-my-accounts', isLoggedIn, function(req, res) {
+	app.get('/transfer-my-accounts', ensureAuthenticated, function(req, res) {
         account.readAccounts(connection, req.user.id, function(err, accountInfo){
             res.render('transfer-my-accounts.ejs', {
                 user : req.user,
@@ -73,7 +94,7 @@ module.exports = function(app, passport, connection) {
         });
 	});
     
-    app.post('/transfer-my-accounts', isLoggedIn, function(req, res) {
+    app.post('/transfer-my-accounts', ensureAuthenticated, function(req, res) {
         
         account.transferMyAccounts(
             connection,
@@ -86,7 +107,7 @@ module.exports = function(app, passport, connection) {
         res.redirect('/account');
 	});
     
-    app.get('/transfer-other-accounts', isLoggedIn, function(req, res) {
+    app.get('/transfer-other-accounts', ensureAuthenticated, function(req, res) {
         account.readAccounts(connection, req.user.id, function(err, accountInfo){
             res.render('transfer-other-accounts.ejs', {
                 user : req.user,
@@ -95,7 +116,7 @@ module.exports = function(app, passport, connection) {
         });
 	});
     
-    app.post('/transfer-other-accounts', isLoggedIn, function(req, res) {
+    app.post('/transfer-other-accounts', ensureAuthenticated, function(req, res) {
         
         account.transferOtherAccounts(
             connection,
@@ -108,24 +129,45 @@ module.exports = function(app, passport, connection) {
         res.redirect('/account');
 	});
     
-    app.post('/transactions', isLoggedIn, function(req, res) {
+    app.post('/transactions', ensureAuthenticated, function(req, res) {
         account.readTransactions(
             connection, 
             req.user.id,
             req.body.account,
             function(err, accountInfo){
-                console.log(accountInfo)
                 res.render('transactions.ejs', {
                     user : req.user,
+                    account: req.body.account,
                     transactions : accountInfo
                 });
         });
 	});
     
+    app.post('/close-account', ensureAuthenticated, function(req, res) {
+        account.getAccountClosureInfo(connection, req.body.account, 
+            function(err, accountInfo){
+                if(accountInfo[0].balance == 0 && accountInfo[0].default_account != 1 ){
+                    account.closeAccount(
+                        connection, 
+                        req.user.id,
+                        req.body.account
+                    );
+                    res.redirect('/account');
+                }else{
+                    res.redirect(400, '/account');
+                }
+            }
+        );
+	});
+    
 	app.get('/logout', function(req, res) {
-        connection.end();
-		req.logout();
-		res.redirect('/');
+        req.session.destroy(function(err){
+            if(err){
+                console.log(err);
+            } else {
+                res.redirect('/');
+            }
+        });
 	});
 
 };

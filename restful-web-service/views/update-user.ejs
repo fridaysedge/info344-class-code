@@ -10,22 +10,21 @@
     <div class="container">
         <div class="jumbotron text-center">
             <h1>MyBank Login</h1>
-            <% if (message.length > 0) { %>
-                <div class="alert alert-danger"><%= message %></div>
-            <% } %>
-            <form action="/login" method="post" >
+            <p>Update User Account:</p>
+            <p><%= user.username %></p>
+            <form action="/update-user" method="post" >
                 <div class="col-sm-12">
-                    <label>Username (Your Email Address)</label>
+                    <label>New Username (leave blank for no change)</label>
                     <input type="text" class="form-control" name="username">
                 </div>
                 <div class="form-group col-sm-12">
-                    <label>Password</label>
+                    <label>New Password (leave blank for no change)</label>
                     <input type="password" class="form-control" name="password">
                 </div>
-                <button type="submit" class="btn btn-primary">Login to MyBank</button>
+                <a href="/account" class="btn btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update User</button>
+                
             </form>
-            <p>Need an account? <a href="/signup">Signup</a></p>
-            <p>Or go <a href="/">home</a>.</p>
         </div>
     </div>
 </body>

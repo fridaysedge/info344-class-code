@@ -5,6 +5,23 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <title>MyBank</title>
+    <script>
+        function submitCloseAccountForm(){
+            document.forms['accounts'].action='/close-account';
+            document.forms['accounts'].submit();
+        }
+        
+        function submitTransactionForm(){
+            document.forms['accounts'].action='/transactions';
+            document.forms['accounts'].submit();
+        }
+        
+        function enableSubmit(){
+            document.getElementById("close-account").removeAttribute("disabled");
+            document.getElementById("view-transactions").removeAttribute("disabled");
+        }
+
+    </script>
 </head>
 <body>
     <div class="container">
@@ -12,19 +29,31 @@
             <h1>MyBank</h1>
             <p>Accounts Overview:</p>
             <p><%= user.username %></p>
-            <form action="/transactions" method="post">
-                <div class="form-group">
-                    <label>Accounts: </label><br>
+            <form id="accounts" action="" method="post">
+
+                <table class="table" style="width:50%;margin-left: auto;margin-right: auto;">
+                    <tr>
+                        <td><b>select</b></td>
+                        <td><b>name</b></td>
+                        <td><b>number</b></td>
+                        <td><b>balance</b></td>
+                    </tr>
                     <% accounts.forEach(function(account) { %>
-                        <input type="radio" name="account" value="<%= account.account_id %>">
-                        <%= account.accountname %> - <%= account.account_id %> - <%= account.balance %><br />
+                    <tr>
+                        <td><input type="radio" name="account" value="<%= account.account_id %>" onclick="enableSubmit()"></td>
+                        <td><%= account.accountname %></td>
+                        <td><%= account.account_id %></td>
+                        <td><%= account.balance %></td>
+                    </tr>
                     <% }); %>
-                </div>
-                <button type="submit" class="btn btn-warning">View Transactions</button>
+                 </table>
+                <button id="close-account" type="submit" class="btn btn-danger" disabled onclick="submitCloseAccountForm()">Close Account</button>
+                <button id="view-transactions" type="submit" class="btn btn-warning" disabled onclick="submitTransactionForm()">View Transactions</button>
             </form>
             <br />
             <p>
-                <a href="/" class="btn btn-danger">Sign Out</a>
+                <a href="/logout" class="btn btn-danger">Sign Out</a>
+                <a href="/update-user" class="btn btn-success">Update User Settings</a>
                 <a href="/add-account" class="btn btn-success">Add Account</a>
                 <a href="/transfer-my-accounts" class="btn btn-primary">Transfer (My Accounts)</a>
                 <a href="/transfer-other-accounts" class="btn btn-info">Transfer (Other Accounts)</a>
