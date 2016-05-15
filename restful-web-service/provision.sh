@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+apt#!/usr/bin/env bash
 
 # use noninteractive mode since this is automated
 # this will suppress prompts like the root password prompt

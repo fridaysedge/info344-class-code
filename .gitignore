@@ -21,3 +21,7 @@ typings
 suggestion-service/files
 
 suggestion-service-mod/files
+
+restful-web-service/provision.sh
+restful-web-service/Vagrantfile
+restful-web-service/tsd.json
