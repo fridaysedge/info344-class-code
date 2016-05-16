@@ -2,7 +2,8 @@
   "name": "restful-web-service",
   "main": "server.js",
   "scripts": {
-    "start": "node ./server"
+    "start": "node ./server",
+    "test": "node_modules/.bin/mocha -w"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
@@ -21,5 +22,9 @@
     "passport-github": "^1.0.0",
     "passport-local": "^1.0.0",
     "uid-safe": "^2.1.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "should": ">= 0.0.1"
   }
 }
