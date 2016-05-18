@@ -25,6 +25,9 @@
   },
   "devDependencies": {
     "mocha": "^2.4.5",
-    "should": ">= 0.0.1"
+    "request-promise": "^2.0.0",
+    "should": ">= 0.0.1",
+    "should-promised": "^0.3.1",
+    "supertest": "^1.2.0"
   }
 }
