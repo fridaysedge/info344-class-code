@@ -186,11 +186,12 @@ module.exports = {
                 .then(function() {
                     return connection.queryAsync('COMMIT');
                 })
-                .catch(function(err) {
+                .catch(function(e) {
+                    err = e;
                     return connection.queryAsync('ROLLBACK');
                 })
                 .then(function() {
-                    callback();
+                    callback(err);
                 })
                 .then(function() {
                     connection.release();
@@ -264,11 +265,12 @@ module.exports = {
                 .then(function() {
                     return connection.queryAsync('COMMIT');
                 })
-                .catch(function(err) {
+                .catch(function(e) {
+                    err = e;
                     return connection.queryAsync('ROLLBACK');
                 })
                 .then(function() {
-                    callback();
+                    callback(err);
                 })
                 .then(function() {
                     connection.release();
@@ -312,15 +314,36 @@ module.exports = {
                 .then(function() {
                     return connection.queryAsync('COMMIT');
                 })
-                .catch(function(err) {
+                .catch(function(e) {
+                    err = e;
                     return connection.queryAsync('ROLLBACK');
                 })
                 .then(function() {
-                    callback();
+                    callback(err);
                 })
                 .then(function() {
                     connection.release();
                 }); 
+        });
+    },
+    
+    // Returns a listing of account information for the provided user.
+    getAccountBalance: function(pool, account, callback){
+        var query = `
+            SELECT * FROM accounts
+            WHERE account_id = ? 
+        `;
+        pool.getConnection(function(err, connection){
+            connection.queryAsync(query, [account])
+                .catch(function(err) {
+                    console.error(err);
+                })
+                .then(function(results) {
+                    callback(null, results);
+                })
+                .then(function() {
+                    connection.release();
+                });             
         });
     },
     

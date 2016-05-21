@@ -96,8 +96,12 @@ module.exports = function(app, passport, pool) {
                 req.body.username, 
                 req.body.password,
                 // After the user has been updated, redirect to accounts.
-                function(){
-                    res.redirect('/account');                                
+                function(err){
+                    if(err){
+                        res.redirect(500, '/account');
+                    }else{
+                        res.redirect('/account');
+                    }                              
                 }
             );
 	    }
@@ -156,8 +160,23 @@ module.exports = function(app, passport, pool) {
     
     // Allows a authenticated user to transfer funds (between "My" accounts).
     app.post('/transfer-my-accounts', ensureAuthenticated,
-        // Transfer the funds
+        // Verify that a transfer is eligible
         function(req, res, next) {
+            account.getAccountBalance(
+                pool,
+                req.body.from,
+                function(err, results){
+                    var projBalance = results[0].balance - req.body.amount;
+                    if(projBalance >= 0 ){
+                        next();
+                    }else{
+                        res.redirect(400, '/account');
+                    }
+                }
+            );
+	    },
+        // Transfer the funds
+        function(req, res, next){
             account.transferMyAccounts(
                 pool,
                 req.body.from,
@@ -165,11 +184,15 @@ module.exports = function(app, passport, pool) {
                 req.body.amount,
                 req.body.reason,
                 req.user.id,
-                function(){
-                    next();
+                function(err){
+                    if(err){
+                        res.redirect(500, '/account');
+                    }else{
+                        next();
+                    }
                 }
             );
-	    },
+        },
         // Redirect the user to the account page.
         function(req, res){
             res.redirect('/account');
@@ -193,7 +216,22 @@ module.exports = function(app, passport, pool) {
     );
     
     // Allows authenticated user to transfer funds (between "Other" accounts).
-    app.post('/transfer-other-accounts', ensureAuthenticated, 
+    app.post('/transfer-other-accounts', ensureAuthenticated,
+        // Verify that a transfer is eligible
+        function(req, res, next) {
+            account.getAccountBalance(
+                pool,
+                req.body.from,
+                function(err, results){
+                    var projBalance = results[0].balance - req.body.amount;
+                    if(projBalance >= 0 ){
+                        next();
+                    }else{
+                        res.redirect(400, '/account');
+                    }
+                }
+            );
+	    },
         // Transfer the funds
         function(req, res, next) {
             account.transferOtherAccounts(
@@ -203,8 +241,12 @@ module.exports = function(app, passport, pool) {
                 req.body.amount,
                 req.body.reason,
                 req.user.id,
-                function(){
-                    next();
+                function(err){
+                    if(err){
+                        res.redirect(500, '/account');
+                    }else{
+                        next();
+                    }
                 }
             );
 	    },
